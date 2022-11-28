@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  title: LabWork API
+  description: |-
+    Service oriented architecture Lab1
+  version: 1.0.0
+  license:
+    name: Report Link
+    url: 'https://docs.google.com/document/d/19NoS7gM8uQe63KaZsfyzHik7FESFCZJV4yMvIDd7P-4/edit'
+servers:
+  - url: https://se.ifmo.ru/~s264465/soa/bars
+tags:
+  - name: discipline
+    description: Everything about labs
+paths:
+  /labwork/{labwork-id}/difficulty/decrease/{steps-count} :
+    put:
+      tags:
+        - discipline
+      summary: lower the difficulty by number
+      description: lower the difficulty by number, but not less thet the minimum
+      operationId: lowerDifficulty
+      parameters:
+        - name: labwork-id
+          in: path
+          description: lab's id that need to be updated
+          required: true
+          schema:
+            type: integer
+        - name: steps-count
+          in: path
+          description: number by how many points to lower
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation. Returns updateded lab
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lab'     
+        'default':
+          description: All unusual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /discipline/{discipline-id}/get-hardcore:
+    get: 
+      tags:
+        - discipline
+      summary: Return 10 hardcore labs on discipline
+      operationId: addHardcoreLabToDiscipline
+      parameters:
+        - name: discipline-id
+          in: path
+          description: Set discipline id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation. Returns added lab
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lab'
+        'default':
+          description: All unusual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+
+components:
+  schemas:
+    Lab:
+      type: object
+      required: 
+        - name
+        - coordinates
+        - creationDate
+        - minimalPoint
+        - difficulty
+        - discipline
+      properties: 
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: Service oriented architecture
+        coordinates:
+           $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date-time
+          example: "Wed Mar 27 08:22:02 IST 2015"
+            
+        minimalPoint:
+          type: integer
+          format: int64
+          example: 6
+          description: value should me more then 0
+        difficulty:
+          $ref: '#/components/schemas/Difficulty'
+        discipline:
+          $ref: '#/components/schemas/Discipline'
+      xml:
+        name: order
+        
+    Coordinates:
+      type: object
+      required: 
+        - x
+      properties:
+        x:
+          type: number
+          format: int
+          example: 1
+          description: value should me less then 188
+        y:
+          type: number
+          format: int
+          example: 1
+          description: can not be null
+          
+    Difficulty:
+      type: string
+      enum: 
+        - VERY_EASY
+        - NORMAL
+        - VERY_HARD
+        - IMPOSSIBLE
+        - HOPELESS
+        
+    Discipline :
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Service Oriented Architecture
+        lectureHours:
+          type: integer
+          format: int32
+          example: 2
+      xml:
+        name: address
+      
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
+  
+
+          
+        
+  
